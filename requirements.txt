@@ -20,3 +20,11 @@ nltk==3.9.1
 # API
 fastapi
 uvicorn
+
+#General
+pytest==8.4.1
+pylint==3.3.8
+jupyterlab
+ipdb==0.13.13
+matplotlib==3.10.6
+seaborn==0.13.2
