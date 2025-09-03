@@ -28,3 +28,7 @@ jupyterlab
 ipdb==0.13.13
 matplotlib==3.10.6
 seaborn==0.13.2
+
+#for DL clustering
+sentence-transformers==5.1.0
+bertopic==0.17.3
