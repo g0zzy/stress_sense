@@ -33,3 +33,12 @@ def clustering_model(prompt:str):
 
     #intervention
     return {'intervention': 'give proper intervention'}
+
+if __name__ == '__main__':
+    #just checking if environment variables can be accessed
+    import os
+    print(os.environ.get('MODEL_TARGET'))
+    print(os.environ.get('GCP_PROJECT'))
+    print(os.environ.get('GCP_REGION'))
+    print(os.environ.get('BUCKET_NAME'))
+    print(os.environ.get('GAR_IMAGE'))
