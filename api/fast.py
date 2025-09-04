@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from ml_logic import theme_finder
 
 app = FastAPI()
 
@@ -20,19 +20,20 @@ def root():
 
 # Prediction
 @app.get('/predict_stress') # expects one query -> prompt from user
-def classification_model(prompt:str):
+def predict_stress(prompt:str):
     ##TODO
     # from the DL classification find prediction
     return {'prediction': 'whatever the classification model found'}
 
-# Intervention
+# Clustering
 @app.get('/predict_theme') # expects one query -> prompt from user
-def clustering_model(prompt:str):
-    #TODO
+def predict_theme(prompt:str):
     #outcome from DL clustering model
+    theme_finder_instance = theme_finder.ThemeFinder()
+    themes = theme_finder_instance.find_theme(prompt, multi_label=False)
+    (theme, confidence) = themes[0]
 
-    #intervention
-    return {'intervention': 'give proper intervention'}
+    return {'theme': theme, 'confidence_level': confidence}
 
 if __name__ == '__main__':
     #just checking if environment variables can be accessed
