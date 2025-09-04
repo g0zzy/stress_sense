@@ -6,7 +6,8 @@ install_requirements:
 	@pip install -r requirements.txt
 
 install:
-	@pip install . -U
+# @pip install . -U
+	@pip install e .
 
 clean:
 	@rm -f */version.txt
