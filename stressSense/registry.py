@@ -1,18 +1,21 @@
 ## all functions related to load / save model
 
-def load_model(stage="Production") -> keras.Model:
+from sklearn.pipeline import Pipeline
+
+
+
+def load_model(stage="Production") -> Pipeline:
     """
     Return a saved model:
     - locally (latest one in alphabetical order)
-    - or from GCS (most recent one) if MODEL_TARGET=='gcs'  --> for unit 02 only
-    - or from MLFLOW (by "stage") if MODEL_TARGET=='mlflow' --> for unit 03 only
+    - or from GCS (most recent one) if MODEL_TARGET=='gcs'  -->
 
     Return None (but do not Raise) if no model is found
 
     """
 
     if MODEL_TARGET == "local":
-        print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
+        print(f"\nLoad latest model from local registry...\n\n")
 
         # Get the latest model version name by the timestamp on disk
         local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "models")
@@ -77,4 +80,3 @@ def load_model(stage="Production") -> keras.Model:
         return model
     else:
         return None
-

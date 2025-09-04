@@ -1,3 +1,8 @@
+import string
+
+from nltk import word_tokenize
+from nltk.stem import WordNetLemmatizer
+
 def cleaning(sentence):
     '''
     basic cleaning of texts. Probably do not needed for DL models
