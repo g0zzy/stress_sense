@@ -41,6 +41,5 @@ models/
 .env.yaml
 .credentials
 secrets.toml
-*.json
 
 # User defined extras
