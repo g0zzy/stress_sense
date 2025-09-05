@@ -1,42 +1,45 @@
 ## all functions related to load / save model
 
+import os # to get the env variables
 from sklearn.pipeline import Pipeline
+import pickle
+
+from google.cloud import storage
 
 
-
-def load_model(stage="Production") -> Pipeline:
+def load_model(model_name="Production") -> Pipeline:
     """
     Return a saved model:
-    - locally (latest one in alphabetical order)
+    - locally (given by MODEL_NAME environment variable) if MODEL_TARGET=='local'  -->
     - or from GCS (most recent one) if MODEL_TARGET=='gcs'  -->
 
     Return None (but do not Raise) if no model is found
 
     """
+    # print(model_name)
+    # return
+    MODEL_TARGET = (os.environ.get('MODEL_TARGET')) # local or gcp
 
     if MODEL_TARGET == "local":
-        print(f"\nLoad latest model from local registry...\n\n")
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)),'models')
+        # local_model_paths
+        print(f"\nLoad model from local registry...\n{path}\n")
+        print(f"Model name : {model_name}")
+        file = os.path.join(path,model_name)
 
-        # Get the latest model version name by the timestamp on disk
-        local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "models")
-        local_model_paths = glob.glob(f"{local_model_directory}/*")
-
-        if not local_model_paths:
+        if not os.path.isfile(file):
+            print(f"\n❌ No model found in {path} with the name {model_name}")
             return None
 
-        most_recent_model_path_on_disk = sorted(local_model_paths)[-1]
-
-        print(Fore.BLUE + f"\nLoad latest model from disk..." + Style.RESET_ALL)
-
-        latest_model = keras.models.load_model(most_recent_model_path_on_disk)
+        with open(file,'rb') as f:
+            model = pickle.load(f)
 
         print("✅ Model loaded from local disk")
-
-        return latest_model
+        return model
 
     elif MODEL_TARGET == "gcs":
         # 🎁 We give you this piece of code as a gift. Please read it carefully! Add a breakpoint if needed!
-        print(Fore.BLUE + f"\nLoad latest model from GCS..." + Style.RESET_ALL)
+        print(f"\nLoad latest model from GCS...")
 
         client = storage.Client()
         blobs = list(client.get_bucket(BUCKET_NAME).list_blobs(prefix="model"))
@@ -56,6 +59,7 @@ def load_model(stage="Production") -> Pipeline:
 
             return None
 
+    '''
     elif MODEL_TARGET == "mlflow":
         print(Fore.BLUE + f"\nLoad [{stage}] model from MLflow..." + Style.RESET_ALL)
 
@@ -80,3 +84,4 @@ def load_model(stage="Production") -> Pipeline:
         return model
     else:
         return None
+'''

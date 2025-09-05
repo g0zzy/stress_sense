@@ -2,6 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from ml_logic import theme_finder
 
+from stress_sense.registry import load_model
+from stress_sense.preprocessor import cleaning
+import os
+
+
 app = FastAPI()
 
 app.add_middleware(
@@ -21,9 +26,25 @@ def root():
 # Prediction
 @app.get('/predict_stress') # expects one query -> prompt from user
 def predict_stress(prompt:str):
-    ##TODO
-    # from the DL classification find prediction
-    return {'prediction': 'whatever the classification model found'}
+    'load a model from local disk or gcp and return the model prediction on the prompt'
+    model = load_model(os.environ.get('MODEL_NAME'))
+
+    if model is None:
+        # TODO
+        #what to do here?
+        return {'prediction': 'model not found'}
+
+    #Preprocessing
+    # TODO : I do not know if that step is necessary when using transformer as classifier. I have that for my ML model
+    prompt = cleaning(prompt)
+
+    #Prediction
+    prediction = model.predict([prompt])
+    prob = model.predict_proba([prompt])
+
+
+    return {'prediction': prediction[0],  # a string
+            'probability': f"{prob[0][0]*100:.2f}"}
 
 # Clustering
 @app.get('/predict_theme') # expects one query -> prompt from user
