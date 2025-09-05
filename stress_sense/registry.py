@@ -16,8 +16,7 @@ def load_model(model_name="Production") -> Pipeline:
     Return None (but do not Raise) if no model is found
 
     """
-    # print(model_name)
-    # return
+
     MODEL_TARGET = (os.environ.get('MODEL_TARGET')) # local or gcp
 
     if MODEL_TARGET == "local":
@@ -41,7 +40,14 @@ def load_model(model_name="Production") -> Pipeline:
         # 🎁 We give you this piece of code as a gift. Please read it carefully! Add a breakpoint if needed!
         print(f"\nLoad latest model from GCS...")
 
+        BUCKET_NAME = os.environ.get('BUCKET_NAME')
+        # import ipdb; ipdb.set_trace()
+
         client = storage.Client()
+
+
+        # TODO have to make changes here
+        '''
         blobs = list(client.get_bucket(BUCKET_NAME).list_blobs(prefix="model"))
 
         try:
@@ -56,32 +62,9 @@ def load_model(model_name="Production") -> Pipeline:
             return latest_model
         except:
             print(f"\n❌ No model found in GCS bucket {BUCKET_NAME}")
-
             return None
-
-    '''
-    elif MODEL_TARGET == "mlflow":
-        print(Fore.BLUE + f"\nLoad [{stage}] model from MLflow..." + Style.RESET_ALL)
-
-        # Load model from MLflow
-        model = None
-        mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
-        client = MlflowClient()
-
-        try:
-            model_versions = client.get_latest_versions(name=MLFLOW_MODEL_NAME, stages=[stage])
-            model_uri = model_versions[0].source
-
-            assert model_uri is not None
-        except:
-            print(f"\n❌ No model found with name {MLFLOW_MODEL_NAME} in stage {stage}")
-
-            return None
-
-        model = mlflow.tensorflow.load_model(model_uri=model_uri)
-
         print("✅ Model loaded from MLflow")
         return model
+    '''
     else:
         return None
-'''
