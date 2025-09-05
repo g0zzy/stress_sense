@@ -7,6 +7,7 @@ class ThemeFinder:
     def __init__(self, labels_path: str = "configs/theme_labels.json",
                     model_name: str = "facebook/bart-large-mnli",
                     device: int = -1):
+
             # Load canonical labels
             with open(labels_path, "r") as f:
                 self.labels: List[str] = json.load(f)

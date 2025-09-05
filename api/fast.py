@@ -53,6 +53,7 @@ def predict_stress(prompt:str):
 @app.get('/predict_theme') # expects one query -> prompt from user
 def predict_theme(prompt:str):
     #outcome from DL clustering model
+    
     theme_finder_instance = theme_finder.ThemeFinder()
     themes = theme_finder_instance.find_theme(prompt, multi_label=False)
     (theme, confidence) = themes[0]
