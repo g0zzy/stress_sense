@@ -27,7 +27,7 @@ def load_model(model_name="Production") -> Pipeline:
         file = os.path.join(path,model_name)
 
         if not os.path.isfile(file):
-            print(f"\n❌ No model found in {BUCKET_NAME} with the name {model_name}")
+            print(f"\n❌ No model found in {path} with the name {model_name}")
             return None
 
         with open(file,'rb') as f:
@@ -36,7 +36,6 @@ def load_model(model_name="Production") -> Pipeline:
         print("✅ Model loaded from local disk")
         return model
 
-    '''
     elif MODEL_TARGET == "gcs":
         # 🎁 We give you this piece of code as a gift. Please read it carefully! Add a breakpoint if needed!
         print(Fore.BLUE + f"\nLoad latest model from GCS..." + Style.RESET_ALL)
@@ -59,6 +58,7 @@ def load_model(model_name="Production") -> Pipeline:
 
             return None
 
+    '''
     elif MODEL_TARGET == "mlflow":
         print(Fore.BLUE + f"\nLoad [{stage}] model from MLflow..." + Style.RESET_ALL)
 
