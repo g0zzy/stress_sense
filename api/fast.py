@@ -8,6 +8,7 @@ import os
 
 
 app = FastAPI()
+app.state.model = load_model(os.environ.get('MODEL_NAME'))
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,9 +28,9 @@ def root():
 @app.get('/predict_stress') # expects one query -> prompt from user
 def predict_stress(prompt:str):
     'load a model from local disk or gcp and return the model prediction on the prompt'
-    model = load_model(os.environ.get('MODEL_NAME'))
+    #model = load_model(os.environ.get('MODEL_NAME'))
 
-    if model is None:
+    if app.state.model is None: #if model is None:
         # TODO
         #what to do here?
         return {'prediction': 'model not found'}
@@ -39,8 +40,10 @@ def predict_stress(prompt:str):
     prompt = cleaning(prompt)
 
     #Prediction
-    prediction = model.predict([prompt])
-    prob = model.predict_proba([prompt])
+    # prediction = model.predict([prompt])
+    prediction = app.state.model.predict([prompt])
+    # prob = model.predict_proba([prompt])
+    prob = app.state.model.predict_proba([prompt])
 
 
     return {'prediction': prediction[0],  # a string
