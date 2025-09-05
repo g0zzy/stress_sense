@@ -4,7 +4,7 @@ import json
 from typing import List, Tuple
 
 class ThemeFinder:
-    def __init__(self, labels_path: str = "configs/theme_labels.json",
+    def __init__(self, labels_path: str = "stress_sense/configs/theme_labels.json",
                     model_name: str = "facebook/bart-large-mnli",
                     device: int = -1):
             # Load canonical labels

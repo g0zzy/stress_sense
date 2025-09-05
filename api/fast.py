@@ -1,13 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from ml_logic import theme_finder
+from stress_sense.ml_logic import theme_finder
 
-from stress_sense.registry import load_model
-from stress_sense.preprocessor import cleaning
+from stress_sense.ml_logic import registry
+from stress_sense.ml_logic import preprocessor
 import os
 
-
 app = FastAPI()
+
+app.state.model = registry.load_model(os.environ.get('MODEL_NAME'))
+app.state.sbert_model = registry.load_sbert_model("models/sbert")
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,7 +19,6 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-
 # HOME
 @app.get("/")
 def root():
@@ -26,25 +27,23 @@ def root():
 # Prediction
 @app.get('/predict_stress') # expects one query -> prompt from user
 def predict_stress(prompt:str):
-    'load a model from local disk or gcp and return the model prediction on the prompt'
-    model = load_model(os.environ.get('MODEL_NAME'))
 
-    if model is None:
-        # TODO
-        #what to do here?
+    if (app.state.model and app.state.sbert_model) is None:
         return {'prediction': 'model not found'}
 
     #Preprocessing
-    # TODO : I do not know if that step is necessary when using transformer as classifier. I have that for my ML model
-    prompt = cleaning(prompt)
+    prompt = preprocessor.strip_urls(prompt)
+
+    prompt_embs = app.state.sbert_model.encode([prompt])
+    print(prompt_embs)
+    print(type(prompt_embs))
 
     #Prediction
-    prediction = model.predict([prompt])
-    prob = model.predict_proba([prompt])
+    prediction = app.state.model.predict(prompt_embs)[0]
+    prob = app.state.model.predict_proba(prompt_embs)[0].max()  # get the max probability
 
-
-    return {'prediction': prediction[0],  # a string
-            'probability': f"{prob[0][0]*100:.2f}"}
+    return {'prediction': preprocessor.decode_label(prediction),  # a string
+            'probability': float(prob.round(2))}
 
 # Clustering
 @app.get('/predict_theme') # expects one query -> prompt from user
