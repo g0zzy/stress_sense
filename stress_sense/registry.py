@@ -4,6 +4,7 @@ import os # to get the env variables
 from sklearn.pipeline import Pipeline
 import pickle
 
+from google.cloud import storage
 
 
 def load_model(model_name="Production") -> Pipeline:
@@ -38,7 +39,7 @@ def load_model(model_name="Production") -> Pipeline:
 
     elif MODEL_TARGET == "gcs":
         # 🎁 We give you this piece of code as a gift. Please read it carefully! Add a breakpoint if needed!
-        print(Fore.BLUE + f"\nLoad latest model from GCS..." + Style.RESET_ALL)
+        print(f"\nLoad latest model from GCS...")
 
         client = storage.Client()
         blobs = list(client.get_bucket(BUCKET_NAME).list_blobs(prefix="model"))
