@@ -5,11 +5,16 @@ from stress_sense.ml_logic import theme_finder
 from stress_sense.ml_logic import registry
 from stress_sense.ml_logic import preprocessor
 import os
+import torch
 
 app = FastAPI()
 
 app.state.model = registry.load_model(os.environ.get('MODEL_NAME'))
 app.state.sbert_model = registry.load_sbert_model("models/sbert")
+
+##Load the model and the registry
+app.state.dlbert_model = registry.load_dl_model("models/dlbert")
+app.state.dlbert_tokenizer = registry.load_dl_tokenizer("models/dlbert")
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,7 +29,38 @@ app.add_middleware(
 def root():
     return {'welcome':'Hello'}
 
-# Prediction
+
+def get_prediction(text, model, tokenizer, device):
+    inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True)
+    inputs = {k: v.to(device) for k, v in inputs.items()}
+    outputs = model(**inputs)
+    _, predicted = torch.max(outputs.logits, dim=1)
+    return predicted.item()
+
+
+
+@app.get('/predict_stress_dl') # expects one query -> prompt from user
+def predict_stress_dl(prompt:str):
+
+    if (app.state.dlbert_model) is None:
+        return {'prediction': 'model not found'}
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    app.state.dlbert_model.to(device)
+    class_labels = {
+    0: 'Anxiety',
+    1: 'Normal',
+    2: 'Stress',
+    }
+
+    predicted_class = get_prediction(prompt, app.state.dlbert_model, app.state.dlbert_tokenizer, device)
+    print(f'Text: {prompt}')
+    print(f'Predicted Class: {class_labels[predicted_class]}')
+    print('---')
+
+    return {'prediction': class_labels[predicted_class]}
+
+
 @app.get('/predict_stress') # expects one query -> prompt from user
 def predict_stress(prompt:str):
 
