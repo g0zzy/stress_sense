@@ -1,6 +1,6 @@
 # data science
-numpy<2.0.0
-pandas==2.2.3
+# numpy<2.0.0
+# pandas==2.2.3
 
 # Uncomment if you use sklearn
 # scikit-learn==1.6.1
@@ -12,23 +12,23 @@ pandas==2.2.3
 
 # Google Cloud
 # Uncomment if you use Google Cloud Storage
-google-cloud-storage==3.3.1
+# google-cloud-storage==3.3.1
 
-# NLP
-nltk==3.9.1
+# # NLP
+# nltk==3.9.1
 
 # API
 fastapi
 uvicorn
 
 #General
-pytest==8.4.1
-pylint==3.3.8
-jupyterlab
-ipdb==0.13.13
-matplotlib==3.10.6
-seaborn==0.13.2
+# pytest==8.4.1
+# pylint==3.3.8
+# jupyterlab
+# ipdb==0.13.13
+# matplotlib==3.10.6
+# seaborn==0.13.2
 
 #for DL clustering
 sentence-transformers==5.1.0
-bertopic==0.17.3
+# bertopic==0.17.3

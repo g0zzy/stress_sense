@@ -11,7 +11,7 @@ class ThemeFinder:
             with open(labels_path, "r") as f:
                 self.labels: List[str] = json.load(f)
             # Load HF pipeline once (CPU by default; set device=0 for GPU)
-            self.pipe = pipeline("zero-shot-classification", model=model_name, device=device)
+            self.pipe = pipeline("zero-shot-classification", model=model_name, device=device, local_files_only=True, cache_dir="./models")
 
     def find_theme(self, text: str, multi_label: bool = False, threshold: float = 0.35) -> List[Tuple[str, float]]:
         res = self.pipe(text, candidate_labels=self.labels, multi_label=multi_label)
