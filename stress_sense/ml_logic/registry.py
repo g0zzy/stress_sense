@@ -3,6 +3,7 @@
 import os # to get the env variables
 from sklearn.pipeline import Pipeline
 import pickle
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from sentence_transformers import SentenceTransformer
 
 def load_model(model_name="Production") -> Pipeline:
@@ -31,6 +32,30 @@ def load_model(model_name="Production") -> Pipeline:
 
     print("✅ Model loaded from local disk")
     return model
+
+
+def load_dl_model(model_path="models/dlbert"):
+    '''Load the DLBERT model from a given path
+    '''
+    if not os.path.isdir(model_path):
+        print(f"\n❌ No DLBERT model found in {model_path}")
+        return None
+    model = AutoModelForSequenceClassification.from_pretrained(model_path)
+    print("✅ DLBERT Model loaded from local disk")
+    return model
+
+
+def load_dl_tokenizer(tokenizer_path="models/dlbert"):
+    '''
+    Load the tokenizer from a given path
+    '''
+    if not os.path.isdir(tokenizer_path):
+        print(f"\n❌ No DLBERT model found in {tokenizer_path}")
+        return None
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+    print("✅ DLBERT Tokenizer loaded from local disk")
+    return tokenizer
+
 
 def load_sbert_model(model_path="models/sbert") -> SentenceTransformer:
     """
