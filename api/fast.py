@@ -12,9 +12,10 @@ app = FastAPI()
 app.state.model = registry.load_model(os.environ.get('MODEL_NAME'))
 app.state.sbert_model = registry.load_sbert_model("models/sbert")
 
-##Load the model and the registry
+##Load the dlbert model and the registry
 app.state.dlbert_model = registry.load_dl_model("models/dlbert")
 app.state.dlbert_tokenizer = registry.load_dl_tokenizer("models/dlbert")
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -83,13 +84,13 @@ def predict_stress(prompt:str):
 
 # Clustering
 @app.get('/predict_theme') # expects one query -> prompt from user
-def predict_theme(prompt:str):
+def predict_theme(prompt:str, multi_label: bool = False):
     #outcome from DL clustering model
     theme_finder_instance = theme_finder.ThemeFinder()
-    themes = theme_finder_instance.find_theme(prompt, multi_label=False)
-    (theme, confidence) = themes[0]
+    themes = theme_finder_instance.find_theme(prompt, multi_label=multi_label)
+    # (theme, confidence) = themes[0]
 
-    return {'theme': theme, 'confidence_level': confidence}
+    return {'themes': themes}
 
 if __name__ == '__main__':
     #just checking if environment variables can be accessed
