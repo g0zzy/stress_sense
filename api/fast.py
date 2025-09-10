@@ -9,8 +9,8 @@ import torch
 
 app = FastAPI()
 
-app.state.model = registry.load_model(os.environ.get('MODEL_NAME'))
-app.state.sbert_model = registry.load_sbert_model("models/sbert")
+#app.state.model = registry.load_model(os.environ.get('MODEL_NAME'))
+#app.state.sbert_model = registry.load_sbert_model("models/sbert")
 
 ##Load the model and the registry
 app.state.dlbert_model = registry.load_dl_model("models/dlbert")
@@ -35,7 +35,14 @@ def get_prediction(text, model, tokenizer, device):
     inputs = {k: v.to(device) for k, v in inputs.items()}
     outputs = model(**inputs)
     _, predicted = torch.max(outputs.logits, dim=1)
-    return predicted.item()
+    predictions = torch.nn.functional.softmax(outputs.logits, dim=-1)
+    print(f"probabilities: \n\t{predictions}")
+    print(f"id2label: \n\t{model.config.id2label}")
+    print(f"predictions:")
+    for _id, label in model.config.id2label.items():
+        print(f"\t{label:<7}:\t{round(float(predictions[0][_id]), 3)}")
+    return predicted.item(), predictions
+
 
 
 
@@ -53,12 +60,16 @@ def predict_stress_dl(prompt:str):
     2: 'Stress',
     }
 
-    predicted_class = get_prediction(prompt, app.state.dlbert_model, app.state.dlbert_tokenizer, device)
+    predicted_class, predictions = get_prediction(prompt, app.state.dlbert_model, app.state.dlbert_tokenizer, device)
     print(f'Text: {prompt}')
     print(f'Predicted Class: {class_labels[predicted_class]}')
+    predictions_list = predictions.tolist()
+    max_index = predictions_list[0].index(max(predictions_list[0]))
+    predicted_probability = predictions_list[0][max_index]
+    print(f'Predicted Probability: {predicted_probability}')
     print('---')
 
-    return {'prediction': class_labels[predicted_class]}
+    return {'prediction': class_labels[predicted_class], 'probability':predicted_probability}
 
 
 @app.get('/predict_stress') # expects one query -> prompt from user
