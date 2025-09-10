@@ -16,6 +16,8 @@ app.state.sbert_model = registry.load_sbert_model("models/sbert")
 app.state.dlbert_model = registry.load_dl_model("models/dlbert")
 app.state.dlbert_tokenizer = registry.load_dl_tokenizer("models/dlbert")
 
+# Load the theme finder instance
+app.state.theme_finder_instance = theme_finder.ThemeFinder()
 
 app.add_middleware(
     CORSMiddleware,
@@ -86,8 +88,7 @@ def predict_stress(prompt:str):
 @app.get('/predict_theme') # expects one query -> prompt from user
 def predict_theme(prompt:str, multi_label: bool = False):
     #outcome from DL clustering model
-    theme_finder_instance = theme_finder.ThemeFinder()
-    themes = theme_finder_instance.find_theme(prompt, multi_label=multi_label)
+    themes = app.state.theme_finder_instance.find_theme(prompt, multi_label=multi_label)
     # (theme, confidence) = themes[0]
 
     return {'themes': themes}
