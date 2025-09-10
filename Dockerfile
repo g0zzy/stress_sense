@@ -7,6 +7,7 @@ COPY requirements.txt /requirements.txt
 
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
+
 # RUN /bin/bash -c "python stress_sense/scripts.py"
 
 CMD uvicorn api.fast:app --host 0.0.0.0 --port $PORT

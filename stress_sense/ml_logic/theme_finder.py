@@ -12,6 +12,7 @@ class ThemeFinder:
             with open(labels_path, "r") as f:
                 self.labels: List[str] = json.load(f)
             # Load HF pipeline once (CPU by default; set device=0 for GPU)
+
             path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),'models')
             model_path = os.path.join(path, "clustering-valhalla-distilbart-mnli-12-1")
             self.pipe = pipeline("zero-shot-classification", model=model_path, device=device)#, local_files_only=True, cache_dir="./models")
