@@ -128,4 +128,5 @@ docker_deploy:
 		--memory $(GAR_MEMORY) \
 		--cpu 4 \
 		--region $(GCP_REGION) \
+		--min-instances 1 \
 		--env-vars-file .env.yaml

@@ -8,5 +8,6 @@ COPY requirements.txt /requirements.txt
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-#CMD uvicorn api.fast:app --host 0.0.0.0 --port $PORT
-CMD ["/bin/bash", "-c", "python /stress_sense/scripts.py && uvicorn api.fast:app --host 0.0.0.0 --port $PORT"]
+# RUN /bin/bash -c "python stress_sense/scripts.py"
+
+CMD uvicorn api.fast:app --host 0.0.0.0 --port $PORT
