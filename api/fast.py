@@ -72,16 +72,16 @@ def predict_stress_dl(prompt:str):
     print(f'Predicted Probability: {predicted_probability}')
     print('---')
 
-    classes_probabilities = {}
+    confidence = {}
     for _id, label in app.state.dlbert_model.config.id2label.items():
         label_number = label.lower()[-1]
         label_class = class_labels.get(int(label_number))
-        classes_probabilities[label_class] = round(float(predictions[0][_id]), 3)
+        confidence[label_class] = round(float(predictions[0][_id]), 3)
 
-    sorted_classes_probabilities = dict(sorted(classes_probabilities.items(), key=lambda item: item[1], reverse=True))
+    sorted_classes_probabilities = dict(sorted(confidence.items(), key=lambda item: item[1], reverse=True))
     print(sorted_classes_probabilities)
 
-    return {'prediction': class_labels[predicted_class], 'classes_probabilities': sorted_classes_probabilities}
+    return {'prediction': class_labels[predicted_class], 'confidence': sorted_classes_probabilities}
 
 
 @app.get('/predict_stress') # expects one query -> prompt from user
