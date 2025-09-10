@@ -13,8 +13,8 @@ app = FastAPI()
 #app.state.sbert_model = registry.load_sbert_model("models/sbert")
 
 ##Load the dlbert model and the registry
-app.state.dlbert_model = registry.load_dl_model("models/dlbert")
-app.state.dlbert_tokenizer = registry.load_dl_tokenizer("models/dlbert")
+app.state.dlbert_model = registry.load_dl_model("models/dlbertfinal")
+app.state.dlbert_tokenizer = registry.load_dl_tokenizer("models/dlbertfinal")
 
 # Load the theme finder instance
 app.state.theme_finder_instance = theme_finder.ThemeFinder()
@@ -72,7 +72,16 @@ def predict_stress_dl(prompt:str):
     print(f'Predicted Probability: {predicted_probability}')
     print('---')
 
-    return {'prediction': class_labels[predicted_class], 'probability':predicted_probability}
+    classes_probabilities = {}
+    for _id, label in app.state.dlbert_model.config.id2label.items():
+        label_number = label.lower()[-1]
+        label_class = class_labels.get(int(label_number))
+        classes_probabilities[label_class] = round(float(predictions[0][_id]), 3)
+
+    sorted_classes_probabilities = dict(sorted(classes_probabilities.items(), key=lambda item: item[1], reverse=True))
+    print(sorted_classes_probabilities)
+
+    return {'prediction': class_labels[predicted_class], 'classes_probabilities': sorted_classes_probabilities}
 
 
 @app.get('/predict_stress') # expects one query -> prompt from user
