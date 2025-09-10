@@ -43,3 +43,4 @@ models/
 secrets.toml
 
 # User defined extras
+sanjib_EDA_results/
