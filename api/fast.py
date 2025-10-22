@@ -9,12 +9,12 @@ import torch
 
 app = FastAPI()
 
-#app.state.model = registry.load_model(os.environ.get('MODEL_NAME'))
-#app.state.sbert_model = registry.load_sbert_model("models/sbert")
+app.state.model = registry.load_model(os.environ.get('MODEL_NAME'))
+app.state.sbert_model = registry.load_sbert_model("models/sbert")
 
 ##Load the dlbert model and the registry
-app.state.dlbert_model = registry.load_dl_model("models/dlbertfinal")
-app.state.dlbert_tokenizer = registry.load_dl_tokenizer("models/dlbertfinal")
+app.state.dlbert_model = registry.load_dl_model("models/dlbert")
+app.state.dlbert_tokenizer = registry.load_dl_tokenizer("models/dlbert")
 
 # Load the theme finder instance
 app.state.theme_finder_instance = theme_finder.ThemeFinder()
@@ -45,8 +45,6 @@ def get_prediction(text, model, tokenizer, device):
     for _id, label in model.config.id2label.items():
         print(f"\t{label:<7}:\t{round(float(predictions[0][_id]), 3)}")
     return predicted.item(), predictions
-
-
 
 
 @app.get('/predict_stress_dl') # expects one query -> prompt from user

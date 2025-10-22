@@ -1,3 +1,4 @@
+import os
 from transformers import pipeline
 
 pipe = pipeline("zero-shot-classification", model=os.environ.get('CLUSTERING_MODEL_NAME'), device=-1)
