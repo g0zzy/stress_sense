@@ -107,8 +107,7 @@ docker_run_interactively:
 		$(DOCKER_IMAGE_PATH):prod \
 		bash
 
-# Push and deploy to cloud
-
+# Push and deploy to cloud (the first two commands below are only needed first time)
 docker_allow:
 	gcloud auth configure-docker $(GCP_REGION)-docker.pkg.dev
 
@@ -128,5 +127,5 @@ docker_deploy:
 		--memory $(GAR_MEMORY) \
 		--cpu 4 \
 		--region $(GCP_REGION) \
-		--min-instances 1 \
 		--env-vars-file .env.yaml
+#  	--min-instances 1 \
